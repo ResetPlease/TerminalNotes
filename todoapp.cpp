@@ -48,7 +48,7 @@ void print_comment(const Comment& obj){
 
 void data_remove(){
     if(remove(filename) == 0){
-        printf("INFO: all data was successfully deleted\n");
+        printf("All data was successfully deleted\n");
     }else{
         printf("INFO: An error occurred during deletion. Perhaps the note was not initialized here\n");
     }
@@ -56,8 +56,7 @@ void data_remove(){
 
 
 int main(int argc, char** argv){
-    if( (argc == 2 && std::string(argv[1]) == std::string("-h")) 
-        || (argc!= 1 && argc != 3)){
+    if(argc!= 1 && argc != 2 && argc != 3){
         print_help();
         return 0;
     }
@@ -70,18 +69,34 @@ int main(int argc, char** argv){
             return 0;
         }
         Comment data;
+        bool reading = false;
         while(fread(&data, sizeof(Comment), 1, file)){
             print_comment(data);
+            reading = true;
         }
         fclose(file);
+        if(!reading){
+            printf("Empty\n");
+            return 0;
+        }
         return 0;
     }
 
     std::string option = std::string(argv[1]);
-    
-    if(option != std::string("+") && option != std::string("-") && option != std::string("clear")){
+
+    if(option != "+" && option != "-" && option != "clear" && option != "-h"){
         printf("ERROR: Choose the correct option\n");
         print_help();
+        return 0;
+    }
+
+    if( argc == 2 && option == "-h"){
+        print_help();
+        return 0;
+    }
+
+    if(argc == 2 && option == "clear"){
+        data_remove();
         return 0;
     }
     
